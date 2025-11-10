@@ -1,7 +1,9 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import TodoList from "./_components/TodoList";
+import { fetchTodos } from "@/lib/services/todos";
 import { fetchTodos } from "@/lib/services/todos";
 
 export default function Home() {
