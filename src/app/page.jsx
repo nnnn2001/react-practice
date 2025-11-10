@@ -1,29 +1,45 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TodoList from "./_components/TodoList";
-
-const initialTodos = [
-  {
-    id: 1,
-    title: "할 일 1",
-    completed: false,
-  },
-  {
-    id: 2,
-    title: "할 일 2",
-    completed: true,
-  },
-  {
-    id: 3,
-    title: "할 일 3",
-    completed: false,
-  },
-];
+import { fetchTodos } from "@/lib/services/todos";
 
 export default function Home() {
-  const [todos, setTodos] = useState(initialTodos);
-  const loadTodos = async () => {};
+  const [todos, setTodos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const loadTodos = async () => {
+    try {
+      const todos = await fetchTodos();
+      setTodos(todos);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      loadTodos();
+    }, 0);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">로딩 중...</div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center text-red-500">
+        {error.message}
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-center mb-8 text-blue-500">
