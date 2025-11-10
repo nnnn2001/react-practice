@@ -1,0 +1,14 @@
+{
+  "todos": [
+    {
+      "title": "json-server 데이터1",
+      "completed": false,
+      "id": 1
+    },
+    {
+      "title": "json-server 데이터2",
+      "completed": false,
+      "id": 2
+    }
+  ]
+}
