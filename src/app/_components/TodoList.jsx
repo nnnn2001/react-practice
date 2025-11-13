@@ -3,6 +3,7 @@
 import TodoItem from "./TodoItem";
 
 export default function TodoList({ todos }) {
+  console.log("todos:", todos);
   return (
     <div className="border">
       {todos.length === 0 ? (
