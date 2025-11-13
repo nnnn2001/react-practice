@@ -17,3 +17,21 @@ export const fetchTodo = async (id) => {
   }
   return await response.json();
 };
+
+/**할 일 추가 */
+export const addTodo = async (title) => {
+  const newTodo = {
+    title,
+    completed: false,
+  };
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newTodo),
+  });
+  if (!response.ok) throw new Error("할 일을 추가하는데 실패했습니다.");
+  return await response.json();
+};
