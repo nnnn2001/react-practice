@@ -64,3 +64,22 @@ export const toggleTodoStatus = async ({ id, currentCompleted }) => {
 
   return await response.json();
 };
+
+/** 좋아요 상태 토글 */
+export const toggleTodoLike = async ({ id, currentLiked }) => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      liked: !currentLiked,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("좋아요 상태를 변경하는데 실패했습니다.");
+  }
+
+  return await response.json();
+};

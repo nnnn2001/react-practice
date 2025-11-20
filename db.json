@@ -3,22 +3,26 @@
     {
       "title": "json-server 데이터1",
       "completed": true,
-      "id": "1"
+      "id": "1",
+      "liked": false
     },
     {
       "title": "json-server 데이터2",
       "completed": true,
-      "id": "2"
+      "id": "2",
+      "liked": false
     },
     {
       "id": "dcf2",
       "title": "json-server 데이터3",
-      "completed": false
+      "completed": false,
+      "liked": false
     },
     {
       "id": "0bb9",
       "title": "json-server 데이터244",
-      "completed": false
+      "completed": false,
+      "liked": false
     }
   ]
 }

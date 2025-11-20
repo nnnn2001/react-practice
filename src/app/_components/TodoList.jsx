@@ -1,6 +1,10 @@
 "use client";
 
-import { fetchTodos, toggleTodoStatus } from "../../lib/services/todos";
+import {
+  fetchTodos,
+  toggleTodoLike,
+  toggleTodoStatus,
+} from "../../lib/services/todos";
 import TodoItem from "./TodoItem";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -12,13 +16,44 @@ export default function TodoList() {
   } = useQuery({
     queryKey: ["todos"],
     queryFn: fetchTodos,
+    meta: {
+      name: "todos 홈",
+    },
   });
 
   const queryClient = useQueryClient();
+
   const toggleMutation = useMutation({
     mutationFn: toggleTodoStatus,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["todos"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["todos"],
+      });
+    },
+  });
+
+  const toggleLikeMutation = useMutation({
+    mutationFn: toggleTodoLike,
+    onMutate: async (newTodo) => {
+      await queryClient.cancelQueries({
+        queryKey: ["todos"],
+      });
+
+      const previousTodos = queryClient.getQueryData(["todos"]);
+
+      queryClient.setQueryData(["todos"], (old) =>
+        old.map((todo) =>
+          todo.id === newTodo.id ? { ...todo, liked: !todo.liked } : todo
+        )
+      );
+
+      return { previousTodos };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(["todos"], context.previousTodos);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 
@@ -51,6 +86,7 @@ export default function TodoList() {
             key={todo.id}
             todo={todo}
             onToggle={toggleMutation.mutate}
+            onLikeToggle={toggleLikeMutation.mutate}
           />
         ))
       )}
