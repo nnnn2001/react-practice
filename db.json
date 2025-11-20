@@ -2,12 +2,12 @@
   "todos": [
     {
       "title": "json-server 데이터1",
-      "completed": false,
+      "completed": true,
       "id": "1"
     },
     {
       "title": "json-server 데이터2",
-      "completed": false,
+      "completed": true,
       "id": "2"
     },
     {

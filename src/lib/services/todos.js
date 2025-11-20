@@ -35,3 +35,32 @@ export const addTodo = async (title) => {
   if (!response.ok) throw new Error("할 일을 추가하는데 실패했습니다.");
   return await response.json();
 };
+
+/** 할 일 삭제 */
+export const deleteTodo = async (id) => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) throw new Error("할 일을 삭제하는데 실패했습니다.");
+  return true;
+};
+
+/** 할 일 완료 상태 토글 */
+export const toggleTodoStatus = async ({ id, currentCompleted }) => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      completed: !currentCompleted,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("할 일 상태를 변경하는데 실패했습니다.");
+  }
+
+  return await response.json();
+};

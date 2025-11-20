@@ -1,9 +1,8 @@
 "use client";
 
-
 import { useState, useEffect } from "react";
 import TodoList from "./_components/TodoList";
-import { fetchTodos } from "@/lib/services/todos";
+import { fetchTodos } from "../lib/services/todos";
 import { useQuery } from "@tanstack/react-query";
 import TodoForm from "./_components/TodoForm";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchTodo } from "@/lib/services/todos";
+import { fetchTodo } from "../../lib/services/todos";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 

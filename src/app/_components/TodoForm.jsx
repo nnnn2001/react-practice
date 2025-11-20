@@ -1,6 +1,6 @@
 "use client";
 
-import { addTodo } from "@/lib/services/todos";
+import { addTodo } from "../../lib/services/todos";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
