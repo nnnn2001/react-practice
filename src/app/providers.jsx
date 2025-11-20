@@ -13,6 +13,13 @@ export default function Providers({ children }) {
             staleTime: 10 * 1000,
           },
         },
+        onError: (error, query) => {
+          alert(
+            `오류 발생: ${query.meta?.name || "알 수 없는 쿼리"} - ${
+              error.message
+            }`
+          );
+        },
       })
   );
   return (
