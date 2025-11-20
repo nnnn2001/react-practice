@@ -1,35 +1,24 @@
 "use client";
 
 import { fetchTodo } from "@/lib/services/todos";
+import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function TodoDetailPage() {
   const { id } = useParams();
   const router = useRouter();
 
-  const [todo, setTodos] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: todo,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["todo", id],
+    queryFn: () => fetchTodo(id),
+    gcTime: 10 * 60,
+  });
 
-  useEffect(() => {
-    const fetchTodoDetail = async () => {
-      try {
-        setIsLoading(true);
-        const data = await fetchTodo(id);
-        setTodos(data);
-      } catch (error) {
-        console.error("할 일 상세 정보를 가져오는 중 오류 발생", error);
-        setError("할 일 상세 정보를 가져오는데 실패했습니다");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTodoDetail();
-  }, [id]);
-
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">로딩 중...</div>
     );
