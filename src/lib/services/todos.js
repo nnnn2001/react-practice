@@ -23,6 +23,29 @@ export const fetchTodos = async ({ page = 1 } = {}) => {
   };
 };
 
+/** Infinite Query를 위한 할 일 목록 조회 */
+export const fetchInfiniteTodos = async ({ pageParam = 1 }) => {
+  const limit = 5;
+  const response = await fetch(`${API_URL}?_page=${pageParam}&_limit=${limit}`);
+
+  if (!response.ok) {
+    throw new Error("서버에서 데이터를 가져오는데 실패했습니다.");
+  }
+
+  const totalCount = response.headers.get("X-Total-Count");
+  const data = await response.json();
+  const total = parseInt(totalCount || "0");
+
+  return {
+    todos: data,
+    totalCount: total,
+    totalPages: Math.max(1, Math.ceil(total / limit)),
+    currentPage: pageParam,
+    nextPage:
+      pageParam + 1 <= Math.ceil(total / limit) ? pageParam + 1 : undefined,
+  };
+};
+
 /**할 일 상세 조회 */
 export const fetchTodo = async (id) => {
   const response = await fetch(`${API_URL}/${id}`);
