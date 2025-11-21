@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:4001/todos";
+export const API_URL = "http://localhost:4001/todos";
 
 console.log("🔥 활성화된 fetchTodos 파일:", import.meta.url);
 
@@ -63,7 +63,7 @@ export const addTodo = async (title) => {
     completed: false,
   };
 
-  const response = await fetch(API_URL, {
+  const response = await fetch(`${API_URL}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
