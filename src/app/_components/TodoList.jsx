@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   fetchTodos,
   toggleTodoLike,
@@ -7,15 +8,17 @@ import {
 } from "../../lib/services/todos";
 import TodoItem from "./TodoItem";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Pagination from "@/components/Pagination";
 
 export default function TodoList() {
+  const [currentPage, setCurrentPage] = useState(1);
   const {
-    data: todos,
+    data: todosData,
     isPending,
     error,
   } = useQuery({
-    queryKey: ["todos"],
-    queryFn: fetchTodos,
+    queryKey: ["todos", "page", currentPage],
+    queryFn: () => fetchTodos({ page: currentPage }),
     meta: {
       name: "todos 홈",
     },
@@ -36,35 +39,47 @@ export default function TodoList() {
     mutationFn: toggleTodoLike,
     onMutate: async (newTodo) => {
       await queryClient.cancelQueries({
-        queryKey: ["todos"],
+        queryKey: ["todos", "page", currentPage],
       });
 
-      const previousTodos = queryClient.getQueryData(["todos"]);
+      const previousTodos = queryClient.getQueryData([
+        "todos",
+        "page",
+        currentPage,
+      ]);
 
-      queryClient.setQueryData(["todos"], (old) =>
-        old.map((todo) =>
-          todo.id === newTodo.id ? { ...todo, liked: !todo.liked } : todo
-        )
-      );
+      queryClient.setQueryData(["todos", "page", currentPage], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          todos: old.todos.map((todo) =>
+            todo.id === newTodo.id ? { ...todo, liked: !todo.liked } : todo
+          ),
+        };
+      });
 
       return { previousTodos };
     },
     onError: (err, newTodo, context) => {
-      queryClient.setQueryData(["todos"], context.previousTodos);
+      queryClient.setQueryData(
+        ["todos", "page", currentPage],
+        context.previousTodos
+      );
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
+      queryClient.invalidateQueries({
+        queryKey: ["todos", "page", currentPage],
+      });
     },
   });
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   if (isPending) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        로딩 중...
-        <div>
-          <button>할일 목록 불러오기</button>
-        </div>
-      </div>
+      <div className="container mx-auto px-4 py-8 text-center">로딩 중...</div>
     );
   }
 
@@ -76,20 +91,28 @@ export default function TodoList() {
     );
   }
 
+  const { todos, totalPages } = todosData;
   return (
-    <div className="border">
-      {todos.length === 0 ? (
-        <div className="p-4 text-center">할 일이 없습니다</div>
-      ) : (
-        todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            onToggle={toggleMutation.mutate}
-            onLikeToggle={toggleLikeMutation.mutate}
-          />
-        ))
-      )}
+    <div>
+      <div className="border">
+        {!todos || todos.length === 0 ? (
+          <div className="p-4 text-center">할 일이 없습니다</div>
+        ) : (
+          todos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              todo={todo}
+              onToggle={toggleMutation.mutate}
+              onLikeToggle={toggleLikeMutation.mutate}
+            />
+          ))
+        )}
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

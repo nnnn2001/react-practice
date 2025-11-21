@@ -1,12 +1,26 @@
 const API_URL = "http://localhost:4001/todos";
 
+console.log("🔥 활성화된 fetchTodos 파일:", import.meta.url);
+
 /**할일 목록 조회 */
-export const fetchTodos = async () => {
-  const response = await fetch(API_URL);
+export const fetchTodos = async ({ page = 1 } = {}) => {
+  console.log("fetchTodos 호출, 페이지:", page);
+  const limit = 5;
+  const response = await fetch(`${API_URL}?_page=${page}&_limit=${limit}`);
+
   if (!response.ok) {
     throw new Error("서버에서 데이터를 가져오는데 실패했습니다");
   }
-  return await response.json();
+
+  const totalCount = response.headers.get("X-Total-Count");
+  const data = await response.json();
+  const total = parseInt(totalCount || "0");
+  return {
+    todos: data,
+    totalCount: total,
+    totalPages: Math.max(1, Math.ceil(total / limit)),
+    currentPage: page,
+  };
 };
 
 /**할 일 상세 조회 */
@@ -15,7 +29,8 @@ export const fetchTodo = async (id) => {
   if (!response.ok) {
     throw new Error("할 일을 찾을 수 없습니다");
   }
-  return await response.json();
+  const data = await response.json();
+  return data;
 };
 
 /**할 일 추가 */

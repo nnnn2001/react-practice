@@ -5,8 +5,15 @@ import TodoList from "./_components/TodoList";
 import { fetchTodos } from "../lib/services/todos";
 import { useQuery } from "@tanstack/react-query";
 import TodoForm from "./_components/TodoForm";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/pagination");
+  }, [router]);
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-center mb-8 text-blue-500">

@@ -8,15 +8,17 @@ import TodoItem from "../_components/TodoItem";
 export default function EnabledTestPage() {
   const [isEnabled, setIsEnabled] = useState(false);
   const {
-    data: todos,
+    data: todosData,
     isPending,
     error,
     isFetching,
   } = useQuery({
     queryKey: ["todos", "enabled-test"],
-    queryFn: fetchTodos,
+    queryFn: () => fetchTodos({ page: 1 }),
     enabled: isEnabled,
   });
+
+  const todos = todosData?.todos ?? [];
 
   return (
     <div className="max-w-2xl mx-auto">

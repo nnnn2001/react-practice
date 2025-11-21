@@ -12,7 +12,7 @@ export default function CompletedPage() {
   } = useQuery({
     queryKey: ["todos"],
     queryFn: fetchTodos,
-    select: (todos) => todos.filter((todo) => todo.completed),
+    select: (data) => data.todos.filter((todo) => todo.completed),
   });
 
   if (isPending)
